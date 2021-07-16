@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import SDK from "@dapis/sdk/src/compoundSDK";
+import {Compound} from "@theapis/sdk";
 import { get, noop, cloneDeep } from "lodash";
 import {NavContext} from '../../context/NavContext';
 import {SDKContext, TokenNameContext} from '../../context/SDKContext';
@@ -29,7 +29,7 @@ const Entry = ({
   const [APYs, setAPYs] = useState({});
 
   //SDK, Nav and TokenName for invest and Withdraw
-  const [sdk] = useState(new SDK());
+  const [sdk] = useState(new Compound());
   const [route, setRoute] = useState('home');
   const [tokenName, settokenName] = useState('ETH');
 
