@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {Compound} from "@theapis/sdk";
+import {Compound, ERC721} from "@theapis/sdk";
 import { get, noop, cloneDeep } from "lodash";
 import {NavContext} from '../../context/NavContext';
 import {SDKContext, TokenNameContext} from '../../context/SDKContext';
 
-import {EntryCard, InvestLayout, WithdrawLayout} from "./component";
+import {EntryCard, InvestLayout, WithdrawLayout, FetchTokens} from "./component";
 import { NETWORK_NAMES } from "../../config/constants";
 import {
   copyToClipboard,
@@ -30,7 +30,9 @@ const Entry = ({
 
   //SDK, Nav and TokenName for invest and Withdraw
   const [sdk] = useState(new Compound());
-  const [route, setRoute] = useState('home');
+  const [sdk2] = useState(new ERC721('https://api.dev.theapis.io'));
+
+  const [route, setRoute] = useState('fetch');
   const [tokenName, settokenName] = useState('ETH');
 
   console.log("zzz tokens:", tokens);
@@ -118,7 +120,7 @@ const Entry = ({
   return (
     <div>
       <div>
-        <SDKContext.Provider value={sdk}>
+        <SDKContext.Provider value={sdk2}>
           <NavContext.Provider value={{ route, setRoute }}>
               <TokenNameContext.Provider value={{tokenName, settokenName}}>
                 <NavContext.Consumer>
@@ -131,6 +133,9 @@ const Entry = ({
                       case 'withdraw': 
                         return <WithdrawLayout
                         />
+                      case 'fetch': 
+                        return <FetchTokens
+                      />
                       default: 
                       return <EntryCard
                         buttonLabel={buttonLabel}

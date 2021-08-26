@@ -7,6 +7,7 @@ import {
   CardBody,
   CardHeader,
   CardText,
+  Dropdown, DropdownToggle, DropdownMenu, DropdownItem
 } from "reactstrap";
 import {NavContext} from '../../context/NavContext';
 import {SDKContext, TokenNameContext} from '../../context/SDKContext';
@@ -485,4 +486,111 @@ const WithdrawLayout = () => {
   );
 }
 
-export{EntryCard, InvestLayout, WithdrawLayout};
+
+const FetchTokens = () => {
+  //curl https://api.theapis.io/api/v1/tokens/address=<MY_ADDRESS|MY_OFFLINE_ADDRESS>/balance?tokenAddress=<RETURNED_APISERC721_TOKEN_ADDRESS>&type=erc721&apiKey=<API_KEY>&chain=ethereum&network=rinkeby
+  const [tokenAddress, settokenAddress] = useState("");
+  const sdk = useContext(SDKContext);
+  const [showToken, setshowToken]=useState(0)
+  const [response, setresponse]=useState("")
+  const {setRoute } = useContext(NavContext);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggle = () => setDropdownOpen(prevState => !prevState);
+
+  async function handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    settokenAddress(value);
+  }
+  async function handleSubmit(){
+    let temp =  await sdk.getCollection(
+      "0xc8bA9a0e6431a08D3032d8d77C2227cD884605eE",
+      {
+        "tokenAddress":"0xA1f52FA7ED411E87dA45Eb3C1937a30A79005eC5",
+        "apiKey":"15c437df-4a5e-49a8-a0b9-5dbca30a4db3",
+        "chain":"ethereum",
+        "network":"rinkeby"
+      }
+    )
+    setresponse(temp.data.result)
+    setshowToken(1)
+    console.log(response)
+  }
+  
+  const showIds = () => {
+    console.log("entered showID")
+    if(response!==""){
+      console.log(response.tokenCollection);
+      return(
+        response.tokenCollection.map(id => (
+          <DropdownItem>{id}</DropdownItem>
+        ))
+      )
+    }
+  }
+  
+
+  return(
+    <div>
+    <Card
+      style={{
+        minWidth: "320px",
+        minHeight: "480px",
+        borderRadius: "24px",
+        filter: "drop-shadow(4px 8px 4px #ddd)",
+        background: "#fafafa"
+      }}
+    >
+      <CardHeader
+        style={{
+          fontSize: "18px",
+          textAlign: "center",
+          borderTopLeftRadius: "24px",
+          borderTopRightRadius: "24px",
+          background: "linear-gradient(to right, #4482D0, #0E4B98)",
+          color: "white",
+        }}
+      >
+        <b>NFT Widget</b>
+        <br />
+        <span style={{fontSize: "12px"}}><em>powered by APIS</em></span>
+      </CardHeader>
+      <CardBody>
+        <div>
+          <label>ERC-721 Contract Adress: </label>
+          <input type="text" name="contractAddress" onChange={handleInputChange} value={tokenAddress}></input><br/>
+          <button type="button" onClick={handleSubmit}>Fetch Tokens</button><br/>
+        </div>
+        {showToken===1 &&
+        <div>
+        <img 
+          src={response.tokenURI}
+          alt=""
+          style={{
+            display: "block",
+            textAlign: "center" 
+          }}>
+        </img>
+      
+      <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+      <DropdownToggle caret>
+        Token ID
+      </DropdownToggle>
+      <DropdownMenu>
+          {response.tokenCollection.map(function(name, index){
+            return <DropdownItem key={index}> {name}</DropdownItem>;
+          })}
+        
+      
+      </DropdownMenu>
+      </Dropdown> 
+    </div>
+}
+      </CardBody>
+    </Card>
+    </div>
+  );
+}
+
+
+export{EntryCard, InvestLayout, WithdrawLayout, FetchTokens};
