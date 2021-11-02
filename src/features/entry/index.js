@@ -21,7 +21,7 @@ const Entry = ({
   const networkId = Number(get(window, "ethereum.networkVersion"));
   const selectedAddress = get(window, "ethereum.selectedAddress", "");
 
-  const [count, setCount] = useState(0);
+  const [count,] = useState(0);
   const [tokens, setTokens] = useState([]);
   const [balances, setBalances] = useState({});
   const [yieldBalances, setYieldBalances] = useState({});
@@ -41,20 +41,7 @@ const Entry = ({
 
 
   useEffect(() => {
-    // Connect Web3
-    if (window && window.ethereum) {
-      window.ethereum.on("accountsChanged", (account) => {
-        console.log("accountsChanged: ", account);
-        setCount(count + 1);
-      });
-    }
-    if (hasEthereum && !networkId) {
-      // Network ID not retrieved yet, wait a bit then try again
-      setTimeout(() => {
-        console.log("Wait for networkId to become available...");
-        setCount(count + 1);
-      }, 1000);
-    }
+     
 
     // Connect SDK
     const getTokens = async () => {
